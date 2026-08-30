@@ -4,41 +4,68 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ==========================================================================
+   1. TAILWIND THEME CONFIGURATION (Tailwind v4)
+   ========================================================================== */
 @theme inline {
+  /* Font Families */
+  --font-sans: var(--font-sans, "Roboto", sans-serif);
+  --font-mono: var(--font-geist-mono, monospace);
+  --font-heading: var(--font-orbitron, "Orbitron", sans-serif);
+  --font-orbitron: var(--font-orbitron, "Orbitron", sans-serif);
+  --font-rajdhani: var(--font-rajdhani, "Rajdhani", sans-serif);
+
+  /* Xbox 360 & Cyberpunk Brand Color Palette */
+  --color-xboxGreen: #107c10;
+  --color-xboxGreen-light: #52b043;
+  --color-xboxGreen-dark: #094d09;
+  --color-neonCyan: #00ffff;
+  --color-neonPink: #ff69b4;
+  --color-neonBlue: #0070f3;
+  --color-neonOrange: #ff7f50;
+  --color-neonPurple: #a855f7;
+  --color-cyberDark: #0a0a0a;
+  --color-cyberPanel: #121216;
+  --color-cyberBorder: rgba(255, 255, 255, 0.08);
+
+  /* Shadcn / Semantic Theme Variables */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Sidebar Tokens */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Border Radii */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -46,109 +73,145 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Keyframe Animations */
+  --keyframes-glow-pulse: {
+    0%, 100%: { opacity: "1", filter: "drop-shadow(0 0 15px rgba(0, 255, 255, 0.6))" };
+    50%: { opacity: "0.7", filter: "drop-shadow(0 0 5px rgba(0, 255, 255, 0.2))" };
+  };
+  --keyframes-float: {
+    0%, 100%: { transform: "translateY(0px)" };
+    50%: { transform: "translateY(-8px)" };
+  };
+
+  --animation-glow-pulse: glow-pulse 3s ease-in-out infinite;
+  --animation-float: float 4s ease-in-out infinite;
 }
 
+/* ==========================================================================
+   2. CSS VARIABLES & THEME VALUES
+   ========================================================================== */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.518 0.253 323.949);
-  --primary-foreground: oklch(0.977 0.017 320.058);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.833 0.145 321.434);
-  --chart-2: oklch(0.667 0.295 322.15);
-  --chart-3: oklch(0.591 0.293 322.896);
-  --chart-4: oklch(0.518 0.253 323.949);
-  --chart-5: oklch(0.452 0.211 324.591);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.591 0.293 322.896);
-  --sidebar-primary-foreground: oklch(0.977 0.017 320.058);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: oklch(0.08 0.01 240);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.12 0.01 240);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.12 0.01 240);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.85 0.18 190);
+  --primary-foreground: oklch(0.1 0 0);
+  --secondary: oklch(0.2 0.02 240);
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.18 0.01 240);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.22 0.02 240);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.6 0.24 25);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.85 0.18 190);
+  --radius: 0.75rem;
+
+  /* Chart colors */
+  --chart-1: oklch(0.85 0.18 190);
+  --chart-2: oklch(0.65 0.22 145);
+  --chart-3: oklch(0.7 0.24 330);
+  --chart-4: oklch(0.75 0.18 60);
+  --chart-5: oklch(0.6 0.2 280);
+
+  /* Sidebar */
+  --sidebar: oklch(0.1 0.01 240);
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: oklch(0.85 0.18 190);
+  --sidebar-primary-foreground: oklch(0.1 0 0);
+  --sidebar-accent: oklch(0.18 0.01 240);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.85 0.18 190);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.452 0.211 324.591);
-  --primary-foreground: oklch(0.977 0.017 320.058);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --background: oklch(0.08 0.01 240);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.12 0.01 240);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.12 0.01 240);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.85 0.18 190);
+  --primary-foreground: oklch(0.1 0 0);
+  --secondary: oklch(0.2 0.02 240);
+  --secondary-foreground: oklch(0.95 0 0);
+  --muted: oklch(0.18 0.01 240);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.22 0.02 240);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.6 0.24 25);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.833 0.145 321.434);
-  --chart-2: oklch(0.667 0.295 322.15);
-  --chart-3: oklch(0.591 0.293 322.896);
-  --chart-4: oklch(0.518 0.253 323.949);
-  --chart-5: oklch(0.452 0.211 324.591);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.667 0.295 322.15);
-  --sidebar-primary-foreground: oklch(0.977 0.017 320.058);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.85 0.18 190);
+  --sidebar: oklch(0.1 0.01 240);
+  --sidebar-foreground: oklch(0.95 0 0);
+  --sidebar-primary: oklch(0.85 0.18 190);
+  --sidebar-primary-foreground: oklch(0.1 0 0);
+  --sidebar-accent: oklch(0.18 0.01 240);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.85 0.18 190);
 }
 
+/* ==========================================================================
+   3. BASE LAYOUT & RESET
+   ========================================================================== */
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    box-sizing: border-box;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+
   html {
-    @apply font-sans;
+    @apply font-sans scroll-smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-color: #0a0a0a;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: #00ffff;
+    color: #050505;
   }
 }
-/* Custom Scrollbar */
+
+/* ==========================================================================
+   4. CUSTOM RETRO-CYBER SCROLLBAR
+   ========================================================================== */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #08080a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f1f1f;
-  border-radius: 4px;
-  border: 1px solid #333;
+  background: #1e1e24;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease-in-out;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #00ffff;
-  box-shadow: 0 0 10px #00ffff;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
 }
 
-/* Gradient text utility */
+/* ==========================================================================
+   5. GRADIENT TEXT UTILITIES
+   ========================================================================== */
 .text-gradient {
   background: linear-gradient(135deg, #82fff3 0%, #fcc474 100%);
   -webkit-background-clip: text;
@@ -157,7 +220,7 @@
 }
 
 .text-gradient-cyan-blue {
-  background: linear-gradient(135deg, #00ffff 0%, #0000ff 100%);
+  background: linear-gradient(135deg, #00ffff 0%, #0070f3 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -170,19 +233,185 @@
   -webkit-text-fill-color: transparent;
 }
 
-/* Text glow utilities */
+.text-gradient-xbox {
+  background: linear-gradient(135deg, #52b043 0%, #107c10 50%, #00ffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-silver {
+  background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   6. NEON TEXT GLOW UTILITIES
+   ========================================================================== */
 .text-glow-cyan {
   text-shadow:
     0 0 8px rgba(0, 255, 255, 0.6),
-    0 0 15px rgba(0, 0, 255, 0.4);
+    0 0 16px rgba(0, 112, 243, 0.4);
 }
 
 .text-glow-pink {
   text-shadow:
-    0 0 8px rgba(255, 127, 80, 0.6),
-    0 0 15px rgba(255, 105, 180, 0.4);
+    0 0 8px rgba(255, 105, 180, 0.6),
+    0 0 16px rgba(255, 127, 80, 0.4);
 }
 
 .text-glow-green {
-  text-shadow: 0 0 8px rgba(16, 124, 16, 0.6);
+  text-shadow:
+    0 0 8px rgba(82, 176, 67, 0.7),
+    0 0 18px rgba(16, 124, 16, 0.5);
+}
+
+.text-glow-orange {
+  text-shadow:
+    0 0 8px rgba(255, 127, 80, 0.6),
+    0 0 16px rgba(255, 69, 0, 0.4);
+}
+
+.text-glow-white {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+}
+
+/* ==========================================================================
+   7. BOX GLOW & LIGHTING UTILITIES
+   ========================================================================== */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.35);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(255, 105, 180, 0.35);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(16, 124, 16, 0.4);
+}
+
+.glow-xbox {
+  box-shadow:
+    0 0 15px rgba(16, 124, 16, 0.5),
+    inset 0 0 10px rgba(82, 176, 67, 0.3);
+}
+
+.glow-orange {
+  box-shadow: 0 0 20px rgba(255, 127, 80, 0.35);
+}
+
+/* Interactive Hover Glows */
+.hover-glow-cyan {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.hover-glow-cyan:hover {
+  border-color: #00ffff;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.45);
+}
+
+.hover-glow-pink {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.hover-glow-pink:hover {
+  border-color: #ff69b4;
+  box-shadow: 0 0 25px rgba(255, 105, 180, 0.45);
+}
+
+.hover-glow-xbox {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.hover-glow-xbox:hover {
+  border-color: #52b043;
+  box-shadow: 0 0 25px rgba(16, 124, 16, 0.55);
+}
+
+/* ==========================================================================
+   8. XBOX 360 BLADES & GLASSMORPHISM SURFACES
+   ========================================================================== */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+
+/* Xbox 360 Blades Dashboard-inspired Card */
+.blade-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(10, 10, 10, 0.85) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.35s ease;
+}
+
+.blade-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.6), transparent);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.blade-card:hover::before {
+  opacity: 1;
+}
+
+.blade-card:hover {
+  border-color: rgba(0, 255, 255, 0.3);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 255, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Xbox Power Orb Badge */
+.xbox-orb {
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #52b043 0%, #107c10 60%, #063806 100%);
+  box-shadow:
+    0 0 15px rgba(16, 124, 16, 0.8),
+    inset 0 0 6px rgba(255, 255, 255, 0.4);
+}
+
+/* ==========================================================================
+   9. RETRO & CYBER BACKGROUND PATTERNS
+   ========================================================================== */
+.cyber-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.scanline-overlay {
+  position: relative;
+}
+.scanline-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.15;
 }
