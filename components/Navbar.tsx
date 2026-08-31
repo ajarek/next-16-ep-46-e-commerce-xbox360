@@ -15,10 +15,16 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
+import { useCartStore } from "@/store/cartStore"
+import { useMounted } from "@/hooks/useMounted"
+
 const Navbar: React.FC = () => {
   const pathname = usePathname()
-
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const mounted = useMounted()
+
+  const items = useCartStore((state) => state.items)
+  const cartCount = items.reduce((acc, i) => acc + (i.quantity ?? 1), 0)
 
   const navLinks = [
     { href: "/", label: "Główna" },
@@ -78,6 +84,11 @@ const Navbar: React.FC = () => {
             className='relative p-2.5 rounded-xl border border-white/10 hover:border-neonCyan bg-white/5 hover:bg-neonCyan/5 transition-all duration-300 group'
           >
             <ShoppingCart className='w-5 h-5 text-gray-300 group-hover:text-neonCyan transition-colors' />
+            {mounted && cartCount > 0 && (
+              <span className='absolute -top-2 -right-2 px-1.5 min-w-5 h-5 rounded-full bg-neonPink text-black font-orbitron text-[11px] font-extrabold flex items-center justify-center shadow-[0_0_10px_#ff69b4] animate-pulse'>
+                {cartCount}
+              </span>
+            )}
           </Link>
 
           {/* Auth States */}
@@ -109,6 +120,11 @@ const Navbar: React.FC = () => {
             className='relative p-2 rounded-lg border border-white/10 bg-white/5'
           >
             <ShoppingCart className='w-5 h-5 text-gray-300' />
+            {mounted && cartCount > 0 && (
+              <span className='absolute -top-2 -right-2 px-1 min-w-4 h-4 rounded-full bg-neonPink text-black font-orbitron text-[10px] font-bold flex items-center justify-center shadow-[0_0_8px_#ff69b4]'>
+                {cartCount}
+              </span>
+            )}
           </Link>
 
           <button
