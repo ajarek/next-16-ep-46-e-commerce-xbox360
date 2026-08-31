@@ -89,7 +89,7 @@ const AboutPage = () => {
   }
 
   return (
-    <div className='min-h-screen flex flex-col bg-[#0a0a0a] text-white'>
+    <div className='min-h-screen flex flex-col bg-cyberDark text-white'>
       {/* Decorative Blur Backgrounds */}
       <div className='absolute top-36 left-10 w-100 h-100 rounded-full bg-neonCyan/5 blur-[120px] pointer-events-none' />
       <div className='absolute top-1/2 right-10 w-125 h-125 rounded-full bg-neonPink/5 blur-[150px] pointer-events-none' />
@@ -194,7 +194,7 @@ const AboutPage = () => {
                   className='relative pl-8 md:pl-12 group'
                 >
                   {/* Timeline Dot */}
-                  <div className='absolute -left-2.75 top-1.5 w-5 h-5 rounded-full bg-[#0a0a0a] border-4 border-white/20 group-hover:border-neonCyan transition-colors duration-300 shadow-[0_0_10px_rgba(0,0,0,0.8)]' />
+                  <div className='absolute -left-2.75 top-1.5 w-5 h-5 rounded-full bg-cyberDark border-4 border-white/20 group-hover:border-neonCyan transition-colors duration-300 shadow-[0_0_10px_rgba(0,0,0,0.8)]' />
 
                   {/* Year Tag (Absolute on larger screen) */}
                   <div className='md:absolute md:-left-32 md:top-0 font-orbitron font-black text-2xl tracking-widest text-glow-cyan text-neonCyan mb-2 md:mb-0 w-24 text-left md:text-right'>
@@ -266,7 +266,7 @@ const AboutPage = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className='text-center backdrop-blur-md bg-linear-to-br from-white/5 to-white/10 border border-white/15 rounded-3xl p-10 md:p-16 shadow-[0_20px_50px_rgba(0,0,0,0.7)] border-neonCyan/30 relative overflow-hidden'
+            className='text-center backdrop-blur-md bg-linear-to-br from-white/5 to-white/10 border rounded-3xl p-10 md:p-16 shadow-[0_20px_50px_rgba(0,0,0,0.7)] border-neonCyan/30 relative overflow-hidden'
           >
             <div className='absolute -top-12 -left-12 w-48 h-48 bg-neonCyan/10 rounded-full blur-3xl pointer-events-none' />
             <div className='absolute -bottom-12 -right-12 w-48 h-48 bg-neonPink/10 rounded-full blur-3xl pointer-events-none' />
