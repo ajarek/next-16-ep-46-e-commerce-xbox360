@@ -154,5 +154,17 @@
     "discount": 0,
     "reviewCount": 0,
     "createdAt": "2026-05-23T21:43:57.844471+00:00"
+  },
+  {
+    "id": 14,
+    "title": "Halo 3",
+    "description": "W grze Halo 3 na XBOX 360 wcielasz się w Master Chiefa, który staje do walki z inwazyjną rasą Covenanta, by uratować ludzkość. W trakcie epickiej podróży przez kosmiczne terytoria, odkrywasz tajemnice Halo, potężnych pierścieni kosmicznych.",
+    "price": 39.99,
+    "image": "https://a.allegroimg.com/s1024/114fef/a10b81bb41c59a4b3857cf5c0478/prawdziwy-UNIKAT-XBOX-360-HALO-3-Polskie-Wydanie-OKLADKA-postrzelaj-sobie-Tytul-HALO-3",
+    "stock": 1,
+    "featured": false,
+    "discount": 10,
+    "reviewCount": 0,
+    "createdAt": "2026-05-23T21:43:57.844471+00:00"
   }
 ]
