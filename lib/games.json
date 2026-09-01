@@ -166,5 +166,41 @@
     "discount": 10,
     "reviewCount": 0,
     "createdAt": "2026-05-23T21:43:57.844471+00:00"
+  },
+  {
+    "id": 15,
+    "title": "Piraci z Karaibów: Na krańcu świata",
+    "description": "Opanuj akrobatyczne walki na miecze, weź udział w epickich pojedynkach i wchodź w interakcje z otoczeniem, aby pokonać wrogów. Odkryj kultowe lokacje z filmów, od tętniącego życiem portu Tortuga po zdradziecki Wir na krańcu świata.",
+    "price": 49.99,
+    "image": "https://m.media-amazon.com/images/I/61orbwGbv-L._AC_UF894,1000_QL80_.jpg",
+    "stock": 1,
+    "featured": false,
+    "discount": 10,
+    "reviewCount": 0,
+    "createdAt": "2026-09-01T21:40:36.651439+00:00"
+  },
+  {
+    "id": 16,
+    "title": "Alan Wake",
+    "description": "Kultowy horror psychologiczny powraca w odświeżonej wersji! Wciel się w postać Alana Wake’a, pisarza walczącego z mrocznymi siłami w miasteczku Bright Falls. Zbuduj napięcie, rozwiązuj tajemnice i walcz o przetrwanie w atmosferze pełnej napięcia.",
+    "price": 44.99,
+    "image": "https://store-images.s-microsoft.com/image/apps.19692.66512344563571887.0decc815-c0f2-495d-a5df-387a6f4e8032.537f51ee-b117-48ce-b590-5c4e8efe363c",
+    "stock": 1,
+    "featured": false,
+    "discount": 25,
+    "reviewCount": 0,
+    "createdAt": "2026-09-01T21:49:33.142002+00:00"
+  },
+  {
+    "id": 18,
+    "title": "Naval Assault: The Killing Tide",
+    "description": "Fabuła gry przenosi użytkowników X360 w czasy II wojny światowej i pozwala poprowadzić aliancką łódź podwodną przez ponad 30 różnych, znanych z historii oraz zmyślonych przez autorów, bitew morskich na całej kuli ziemskiej.",
+    "price":69.99,
+    "image": "https://image.ceneostatic.pl/data/products/9078415/i-naval-assault-the-killing-tide-gra-xbox-360.jpg",
+    "stock": 4,
+    "featured": true,
+    "discount": 20,
+    "reviewCount": 25,
+    "createdAt": "2026-09-01T21:50:34.916681+00:00"
   }
 ]
