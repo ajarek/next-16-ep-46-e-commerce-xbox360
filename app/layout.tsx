@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono, Roboto, Orbitron, Rajdhani } from "next/font/google"
 import "./globals.css"
 import { cn } from "@/lib/utils"
+import { AuthProvider } from "@/context/AuthContext"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang='pl'
+      data-scroll-behavior='smooth'
       className={cn(
         "h-full",
         "antialiased",
@@ -51,9 +53,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className='min-h-full flex flex-col bg-[#0a0a0a] text-white selection:bg-neonCyan selection:text-black'>
-        <Navbar />
-        {children}
-        <Footer />
+        <AuthProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   )

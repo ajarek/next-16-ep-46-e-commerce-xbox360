@@ -442,11 +442,7 @@ export default function CartPage() {
               {/* Checkout Button */}
               <button
                 onClick={() => {
-                  alert(
-                    `Dziękujemy! Twoje zamówienie (${totalItemsCount} szt.) na kwotę ${finalPayable.toFixed(2)} PLN zostało przyjęte!`,
-                  )
-                  removeAllFromCart()
-                  router.push("/store")
+                  router.push("/checkout")
                 }}
                 className='w-full flex items-center justify-center gap-2 py-4 px-6 bg-linear-to-r from-neonCyan to-neonBlue hover:from-neonCyan hover:to-neonCyan text-black font-rajdhani text-lg font-bold tracking-wider uppercase rounded-2xl shadow-[0_0_20px_rgba(0,255,255,0.4)] hover:shadow-[0_0_30px_rgba(0,255,255,0.7)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 group'
               >

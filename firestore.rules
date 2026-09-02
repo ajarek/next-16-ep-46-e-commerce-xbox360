@@ -1,0 +1,79 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────
+    // Users collection
+    // ─────────────────────────────────────────────────────────────
+    match /users/{uid} {
+      // Anyone authenticated can read any profile (needed for admin panel)
+      allow read: if request.auth != null;
+
+      // Only the owner can create/update their own profile
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow update: if request.auth != null && (
+        request.auth.uid == uid ||
+        // Allow admins to update any user (e.g. change roles)
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+
+      // Only admins can delete users
+      allow delete: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Products collection
+    // ─────────────────────────────────────────────────────────────
+    match /products/{productId} {
+      // Anyone can read products (public catalog)
+      allow read: if true;
+
+      // Only admins can create, update, or delete products
+      allow create, update, delete: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Orders collection
+    // ─────────────────────────────────────────────────────────────
+    match /orders/{orderId} {
+      // Users can read their own orders; admins can read all
+      allow read: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+
+      // Authenticated users can create orders (for themselves)
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+
+      // Only admins can update order status
+      allow update: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+
+      // Only admins can delete orders
+      allow delete: if request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Reviews collection
+    // ─────────────────────────────────────────────────────────────
+    match /reviews/{reviewId} {
+      // Anyone can read reviews (public)
+      allow read: if true;
+
+      // Authenticated users can create reviews
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid;
+
+      // Only the review author or admins can update/delete
+      allow update, delete: if request.auth != null && (
+        resource.data.userId == request.auth.uid ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin"
+      );
+    }
+  }
+}
