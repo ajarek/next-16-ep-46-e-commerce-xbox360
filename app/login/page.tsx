@@ -15,6 +15,7 @@ import {
   AlertCircle,
   Sparkles,
 } from "lucide-react"
+import { FirebaseError } from "firebase/app"
 import { signInWithEmail, signInWithGoogle } from "@/lib/firebase-auth"
 import { useAuth } from "@/context/AuthContext"
 
@@ -42,14 +43,18 @@ export default function LoginPage() {
     try {
       await signInWithEmail(email, password)
       router.push("/")
-    } catch (err: any) {
-      setError(
-        err.code === "auth/user-not-found"
-          ? "Nie znaleziono konta z tym adresem e-mail."
-          : err.code === "auth/wrong-password"
-            ? "Nieprawidłowe hasło."
-            : "Wystąpił błąd podczas logowania. Spróbuj ponownie.",
-      )
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(
+          err.code === "auth/user-not-found"
+            ? "Nie znaleziono konta z tym adresem e-mail."
+            : err.code === "auth/wrong-password"
+              ? "Nieprawidłowe hasło."
+              : "Wystąpił błąd podczas logowania. Spróbuj ponownie.",
+        )
+      } else {
+        setError("Wystąpił błąd podczas logowania. Spróbuj ponownie.")
+      }
     } finally {
       setSubmitting(false)
     }
@@ -61,7 +66,7 @@ export default function LoginPage() {
     try {
       await signInWithGoogle()
       router.push("/")
-    } catch (err: any) {
+    } catch {
       setError("Nie udało się zalogować przez Google. Spróbuj ponownie.")
     } finally {
       setSubmitting(false)

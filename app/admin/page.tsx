@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -12,9 +12,7 @@ import {
   TrendingUp,
   Loader2,
   ArrowLeft,
-  Eye,
   CheckCircle2,
-  XCircle,
   Clock,
   RefreshCw,
   AlertCircle,
@@ -32,7 +30,7 @@ import {
 
 export default function AdminPage() {
   const router = useRouter()
-  const { user, profile, isAdmin, loading: authLoading } = useAuth()
+  const { user, isAdmin, loading: authLoading } = useAuth()
 
   const [orders, setOrders] = useState<OrderDoc[]>([])
   const [products, setProducts] = useState<ProductDoc[]>([])
@@ -47,14 +45,7 @@ export default function AdminPage() {
     }
   }, [user, isAdmin, authLoading, router])
 
-  // Load data
-  useEffect(() => {
-    if (isAdmin) {
-      loadData()
-    }
-  }, [isAdmin])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoadingData(true)
     try {
       const [ordersData, productsData] = await Promise.all([
@@ -68,7 +59,38 @@ export default function AdminPage() {
     } finally {
       setLoadingData(false)
     }
-  }
+  }, [])
+
+  // Load data
+  useEffect(() => {
+    if (!isAdmin) return
+    let isMounted = true
+
+    async function fetchData() {
+      try {
+        const [ordersData, productsData] = await Promise.all([
+          getAllOrders(),
+          getAllProducts(),
+        ])
+        if (isMounted) {
+          setOrders(ordersData)
+          setProducts(productsData)
+        }
+      } catch (err) {
+        console.error("Error loading admin data:", err)
+      } finally {
+        if (isMounted) {
+          setLoadingData(false)
+        }
+      }
+    }
+
+    fetchData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [isAdmin])
 
   const handleUpdateOrderStatus = async (orderId: string, status: OrderDoc["status"]) => {
     setUpdatingOrder(orderId)

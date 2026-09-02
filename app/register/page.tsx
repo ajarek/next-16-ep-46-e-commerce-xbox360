@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Sparkles,
 } from "lucide-react"
+import { FirebaseError } from "firebase/app"
 import { signUpWithEmail, signInWithGoogle } from "@/lib/firebase-auth"
 import { useAuth } from "@/context/AuthContext"
 
@@ -55,14 +56,18 @@ export default function RegisterPage() {
     try {
       await signUpWithEmail(email, password, displayName)
       router.push("/")
-    } catch (err: any) {
-      setError(
-        err.code === "auth/email-already-in-use"
-          ? "Konto z tym adresem e-mail już istnieje."
-          : err.code === "auth/weak-password"
-            ? "Hasło jest zbyt słabe."
-            : "Wystąpił błąd podczas rejestracji. Spróbuj ponownie.",
-      )
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(
+          err.code === "auth/email-already-in-use"
+            ? "Konto z tym adresem e-mail już istnieje."
+            : err.code === "auth/weak-password"
+              ? "Hasło jest zbyt słabe."
+              : "Wystąpił błąd podczas rejestracji. Spróbuj ponownie.",
+        )
+      } else {
+        setError("Wystąpił błąd podczas rejestracji. Spróbuj ponownie.")
+      }
     } finally {
       setSubmitting(false)
     }
