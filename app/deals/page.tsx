@@ -23,8 +23,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
-import rawGames from "@/lib/games.json"
-import { Product } from "@/types/game-types"
+import { getAllProducts, type ProductDoc } from "@/lib/firebase-firestore"
 import { useCartStore } from "@/store/cartStore"
 import { useMounted } from "@/hooks/useMounted"
 
@@ -52,15 +51,25 @@ export default function DealsPage() {
   const mounted = useMounted()
   const { addItemToCart, items: cartItems } = useCartStore()
 
-  // Deals raw dataset (games where discount > 0)
-  const allDeals: Product[] = useMemo(() => {
-    const games = rawGames as Product[]
-    return games.filter((g) => (g.discount || 0) > 0)
+  // Products from Firestore
+  const [allProducts, setAllProducts] = useState<ProductDoc[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+
+  useEffect(() => {
+    getAllProducts()
+      .then(setAllProducts)
+      .catch((err) => console.error("Error loading products:", err))
+      .finally(() => setLoadingProducts(false))
   }, [])
 
+  // Deals raw dataset (games where discount > 0)
+  const allDeals: ProductDoc[] = useMemo(() => {
+    return allProducts.filter((g) => (g.discount || 0) > 0)
+  }, [allProducts])
+
   // UI States
-  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({})
-  const [selectedProductForModal, setSelectedProductForModal] = useState<Product | null>(null)
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
+  const [selectedProductForModal, setSelectedProductForModal] = useState<ProductDoc | null>(null)
   const [activeTab, setActiveTab] = useState<DealFilterTab>("all")
   const [sortBy, setSortBy] = useState<string>("discount-desc")
   const [copiedCoupon, setCopiedCoupon] = useState(false)
@@ -94,7 +103,7 @@ export default function DealsPage() {
   }
 
   // Handle Add To Cart with Xbox Achievement Toast
-  const handleAddToCart = (product: Product, e?: React.MouseEvent) => {
+  const handleAddToCart = (product: ProductDoc, e?: React.MouseEvent) => {
     if (e) e.stopPropagation()
     addItemToCart(product)
 
@@ -110,7 +119,7 @@ export default function DealsPage() {
   }
 
   // Cart Helper
-  const getCartQuantity = (productId: number) => {
+  const getCartQuantity = (productId: string) => {
     const found = cartItems.find((item) => item.id === productId)
     return found ? found.quantity ?? 1 : 0
   }
@@ -149,7 +158,7 @@ export default function DealsPage() {
     })
   }, [filteredDeals, sortBy])
 
-  if (!mounted) {
+  if (!mounted || loadingProducts) {
     return (
       <div className='min-h-screen flex flex-col items-center justify-center bg-cyberDark text-white'>
         <div className='w-12 h-12 rounded-full border-4 border-t-neonPink border-white/10 animate-spin shadow-[0_0_20px_#ff69b4]' />

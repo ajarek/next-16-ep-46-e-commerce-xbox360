@@ -43,7 +43,7 @@ export default function LoginPage() {
     try {
       await signInWithEmail(email, password)
       router.push("/")
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof FirebaseError) {
         setError(
           err.code === "auth/user-not-found"

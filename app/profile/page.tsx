@@ -60,14 +60,14 @@ export default function ProfilePage() {
       .slice(0, 2)
   }
 
-  const statusColors: Record<string, string> = {
+  const statusColors: Record<OrderDoc["status"], string> = {
     pending: "bg-neonOrange/20 text-neonOrange",
     processing: "bg-neonCyan/20 text-neonCyan",
     completed: "bg-xboxGreen/20 text-xboxGreen",
     cancelled: "bg-red-500/20 text-red-400",
   }
 
-  const statusLabels: Record<string, string> = {
+  const statusLabels: Record<OrderDoc["status"], string> = {
     pending: "Oczekujące",
     processing: "W realizacji",
     completed: "Zakończone",

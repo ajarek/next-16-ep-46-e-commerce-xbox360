@@ -29,11 +29,11 @@ import {
   Tag,
   ShieldCheck,
   RefreshCw,
+  Loader2,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
-import rawGames from "@/lib/games.json"
-import { Product } from "@/types/game-types"
+import { getAllProducts, type ProductDoc } from "@/lib/firebase-firestore"
 import { useCartStore } from "@/store/cartStore"
 
 // Preset filter tags
@@ -46,13 +46,21 @@ function StoreContent() {
   // Zustand Cart Store
   const { addItemToCart, items: cartItems } = useCartStore()
 
-  // Core Data
-  const products: Product[] = useMemo(() => rawGames as Product[], [])
+  // Core Data from Firestore
+  const [products, setProducts] = useState<ProductDoc[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+
+  useEffect(() => {
+    getAllProducts()
+      .then(setProducts)
+      .catch((err) => console.error("Error loading products:", err))
+      .finally(() => setLoadingProducts(false))
+  }, [])
 
   // UI States
-  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({})
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
   const [selectedProductForModal, setSelectedProductForModal] =
-    useState<Product | null>(null)
+    useState<ProductDoc | null>(null)
   const [achievementNotification, setAchievementNotification] = useState<{
     show: boolean
     title: string
@@ -93,7 +101,7 @@ function StoreContent() {
   }, [search, activeTab, maxPrice, sortBy, updateUrlParams])
 
   // Handle Add To Cart with Xbox Achievement Toast
-  const handleAddToCart = (product: Product, e?: React.MouseEvent) => {
+  const handleAddToCart = (product: ProductDoc, e?: React.MouseEvent) => {
     if (e) e.stopPropagation()
     addItemToCart(product)
 
@@ -154,7 +162,7 @@ function StoreContent() {
   // Sort products
   const sortedProducts = useMemo(() => {
     return [...filteredProducts].sort((a, b) => {
-      const getFinalPrice = (p: Product) =>
+      const getFinalPrice = (p: ProductDoc) =>
         p.discount > 0 ? p.price * (1 - p.discount / 100) : p.price
 
       switch (sortBy) {
@@ -172,16 +180,13 @@ function StoreContent() {
           return b.title.localeCompare(a.title)
         case "newest":
         default:
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime() ||
-            b.id - a.id
-          )
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       }
     })
   }, [filteredProducts, sortBy])
 
   // Helper to check cart quantity for a game
-  const getCartQuantity = (productId: number) => {
+  const getCartQuantity = (productId: string) => {
     const found = cartItems.find((item) => item.id === productId)
     return found ? (found.quantity ?? 1) : 0
   }
@@ -463,8 +468,15 @@ function StoreContent() {
             </div>
           </div>
 
-          {/* Empty State */}
-          {sortedProducts.length === 0 ? (
+          {/* Loading State */}
+          {loadingProducts ? (
+            <div className='flex flex-col items-center justify-center py-20'>
+              <Loader2 className='w-10 h-10 animate-spin text-neonCyan' />
+              <span className='font-orbitron text-sm tracking-widest text-neonCyan mt-4 animate-pulse'>
+                ŁADOWANIE KATALOGU...
+              </span>
+            </div>
+          ) : sortedProducts.length === 0 ? (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -17,8 +17,7 @@ import {
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
-import { Product } from "@/types/game-types"
-import rawGames from "@/lib/games.json"
+import { getAllProducts, type ProductDoc } from "@/lib/firebase-firestore"
 import { useCartStore } from "@/store/cartStore"
 import { useMounted } from "@/hooks/useMounted"
 
@@ -26,19 +25,29 @@ const FeaturedDeals = () => {
   const mounted = useMounted()
   const { addItemToCart, items: cartItems } = useCartStore()
 
+  // Products from Firestore
+  const [allProducts, setAllProducts] = useState<ProductDoc[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+
+  useEffect(() => {
+    getAllProducts()
+      .then(setAllProducts)
+      .catch((err) => console.error("Error loading products:", err))
+      .finally(() => setLoadingProducts(false))
+  }, [])
+
   // Pick top 3 discounted deals sorted by highest discount
   const deals = useMemo(() => {
-    const allGames = rawGames as Product[]
-    return allGames
+    return allProducts
       .filter((game) => (game.discount || 0) > 0)
       .sort((a, b) => (b.discount || 0) - (a.discount || 0))
       .slice(0, 3)
-  }, [])
+  }, [allProducts])
 
   // UI States
-  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({})
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
   const [selectedProductForModal, setSelectedProductForModal] =
-    useState<Product | null>(null)
+    useState<ProductDoc | null>(null)
   const [achievementNotification, setAchievementNotification] = useState<{
     show: boolean
     title: string
@@ -46,7 +55,7 @@ const FeaturedDeals = () => {
   }>({ show: false, title: "", description: "" })
 
   // Handle Add To Cart with Xbox 360 Achievement Toast
-  const handleAddToCart = (product: Product, e?: React.MouseEvent) => {
+  const handleAddToCart = (product: ProductDoc, e?: React.MouseEvent) => {
     if (e) e.stopPropagation()
     addItemToCart(product)
 
@@ -62,7 +71,7 @@ const FeaturedDeals = () => {
   }
 
   // Cart Helper
-  const getCartQuantity = (productId: number) => {
+  const getCartQuantity = (productId: string) => {
     const found = cartItems.find((item) => item.id === productId)
     return found ? (found.quantity ?? 1) : 0
   }
@@ -126,7 +135,7 @@ const FeaturedDeals = () => {
         </div>
 
         {/* Deals Grid */}
-        {!mounted ? (
+        {!mounted || loadingProducts ? (
           <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
             {[1, 2, 3].map((i) => (
               <div

@@ -33,7 +33,7 @@ export interface UserProfile {
 }
 
 export interface ProductDoc {
-  id?: string
+  id: string
   title: string
   description: string
   price: number
@@ -47,7 +47,7 @@ export interface ProductDoc {
 }
 
 export interface OrderItem {
-  productId: number
+  productId: string
   title: string
   image: string
   quantity: number
@@ -216,6 +216,10 @@ export async function updateOrderStatus(
   status: OrderDoc["status"],
 ) {
   await updateDoc(doc(ordersCol(), orderId), { status })
+}
+
+export async function deleteOrder(orderId: string) {
+  await deleteDoc(doc(ordersCol(), orderId))
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

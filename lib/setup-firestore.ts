@@ -20,7 +20,6 @@ import {
 } from "firebase/firestore"
 import { getFirebaseDB } from "@/lib/firebase"
 import rawGames from "@/lib/games.json"
-import type { Product } from "@/types/game-types"
 
 const ADMIN_UID = "REPLACE_WITH_ADMIN_UID" // Update after creating auth user
 const ADMIN_EMAIL = "ajarek2101@gmail.com"
@@ -47,7 +46,7 @@ async function seedProducts(): Promise<{ created: number; skipped: number }> {
   let created = 0
   let skipped = 0
 
-  for (const game of rawGames as Product[]) {
+  for (const game of rawGames as { id: number; title: string; description: string; price: number; image: string; stock: number; featured: boolean; discount: number; reviewCount: number; createdAt?: string }[]) {
     const id = String(game.id)
 
     if (existingIds.has(id)) {

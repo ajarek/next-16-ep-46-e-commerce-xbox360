@@ -27,7 +27,7 @@ import { useMounted } from "@/hooks/useMounted"
 export default function CartPage() {
   const router = useRouter()
   const mounted = useMounted()
-  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({})
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
   const [promoCode, setPromoCode] = useState("")
   const [promoApplied, setPromoApplied] = useState(false)
   const [promoError, setPromoError] = useState("")

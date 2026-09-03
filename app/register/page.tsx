@@ -56,7 +56,7 @@ export default function RegisterPage() {
     try {
       await signUpWithEmail(email, password, displayName)
       router.push("/")
-    } catch (err) {
+    } catch (err: unknown) {
       if (err instanceof FirebaseError) {
         setError(
           err.code === "auth/email-already-in-use"
