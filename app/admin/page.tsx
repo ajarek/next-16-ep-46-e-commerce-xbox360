@@ -19,6 +19,7 @@ import {
   Crown,
   Gamepad2,
   Trash2,
+  UserMinus,
   Plus,
   Sparkles,
   ChevronDown,
@@ -35,8 +36,11 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getAllUsers,
+  deleteUserProfile,
   type OrderDoc,
   type ProductDoc,
+  type UserProfile,
 } from "@/lib/firebase-firestore"
 
 export default function AdminPage() {
@@ -45,6 +49,7 @@ export default function AdminPage() {
 
   const [orders, setOrders] = useState<OrderDoc[]>([])
   const [products, setProducts] = useState<ProductDoc[]>([])
+  const [users, setUsers] = useState<UserProfile[]>([])
   const [loadingData, setLoadingData] = useState(true)
   const [activeTab, setActiveTab] = useState<"stats" | "orders" | "products" | "users">("stats")
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null)
@@ -77,6 +82,8 @@ export default function AdminPage() {
   const [productFormErrors, setProductFormErrors] = useState<Record<string, string>>({})
   const [addImageFailed, setAddImageFailed] = useState(false)
   const [editImageFailed, setEditImageFailed] = useState(false)
+  const [deletingUser, setDeletingUser] = useState<string | null>(null)
+  const [confirmDeleteUser, setConfirmDeleteUser] = useState<UserProfile | null>(null)
   const [newProduct, setNewProduct] = useState<{
     title: string
     description: string
@@ -107,12 +114,14 @@ export default function AdminPage() {
   const loadData = useCallback(async () => {
     setLoadingData(true)
     try {
-      const [ordersData, productsData] = await Promise.all([
+      const [ordersData, productsData, usersData] = await Promise.all([
         getAllOrders(),
         getAllProducts(),
+        getAllUsers(),
       ])
       setOrders(ordersData)
       setProducts(productsData)
+      setUsers(usersData)
     } catch (err: unknown) {
       console.error("Error loading admin data:", err)
     } finally {
@@ -127,13 +136,15 @@ export default function AdminPage() {
 
     async function fetchData() {
       try {
-        const [ordersData, productsData] = await Promise.all([
+        const [ordersData, productsData, usersData] = await Promise.all([
           getAllOrders(),
           getAllProducts(),
+          getAllUsers(),
         ])
         if (isMounted) {
           setOrders(ordersData)
           setProducts(productsData)
+          setUsers(usersData)
         }
       } catch (err: unknown) {
         console.error("Error loading admin data:", err)
@@ -175,6 +186,20 @@ export default function AdminPage() {
       console.error("Error deleting order:", err)
     } finally {
       setDeletingOrder(null)
+    }
+  }
+
+  const handleDeleteUser = async () => {
+    if (!confirmDeleteUser) return
+    setDeletingUser(confirmDeleteUser.uid)
+    try {
+      await deleteUserProfile(confirmDeleteUser.uid)
+      setUsers((prev) => prev.filter((u) => u.uid !== confirmDeleteUser.uid))
+    } catch (err: unknown) {
+      console.error("Error deleting user:", err)
+    } finally {
+      setDeletingUser(null)
+      setConfirmDeleteUser(null)
     }
   }
 
@@ -1333,30 +1358,173 @@ export default function AdminPage() {
               </motion.div>
             )}
 
-            {/* Users Tab (placeholder) */}
+            {/* Users Tab */}
             {activeTab === "users" && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="backdrop-blur-md bg-[#101014]/90 border border-white/10 rounded-3xl p-8 text-center space-y-4"
+                className="space-y-4"
               >
-                <Crown className="w-12 h-12 text-xboxGreen mx-auto" />
-                <h3 className="font-orbitron font-bold text-xl text-white tracking-wider">
-                  ZARZĄDZANIE UŻYTKOWNIKAMI
-                </h3>
-                <p className="font-rajdhani text-gray-400 font-semibold max-w-md mx-auto">
-                  Lista użytkowników jest dostępna w konsoli Firebase. W przyszłej
-                  wersji dodamy pełny panel CRUD do zarządzania kontami i rolami.
-                </p>
-                <div className="p-4 rounded-xl bg-white/5 border border-white/10 inline-flex items-center gap-2 text-sm font-rajdhani text-gray-400">
-                  <AlertCircle className="w-4 h-4 text-neonOrange" />
-                  Funkcja w przygotowaniu — użyj Firebase Console do zarządzania rolami.
-                </div>
+                {users.length === 0 ? (
+                  <div className="backdrop-blur-md bg-black/40 border border-white/10 rounded-3xl p-16 text-center">
+                    <Users className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                    <p className="font-rajdhani text-gray-400 font-semibold">
+                      Brak użytkowników w systemie.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-rajdhani text-sm text-gray-400 font-semibold">
+                        Łącznie: <span className="text-white font-bold">{users.length}</span> użytkowników
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {users.map((u) => (
+                        <div
+                          key={u.uid}
+                          className="backdrop-blur-md bg-[#101014]/90 border border-white/10 rounded-2xl p-5 space-y-3 hover:border-white/20 transition-all"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-xl bg-xboxGreen/15 border border-xboxGreen/40 flex items-center justify-center">
+                                <Users className="w-5 h-5 text-xboxGreen" />
+                              </div>
+                              <div>
+                                <p className="font-orbitron font-bold text-sm text-white">
+                                  {u.displayName || "Gracz"}
+                                </p>
+                                <p className="font-rajdhani text-xs text-gray-500 truncate max-w-[160px]">
+                                  {u.email}
+                                </p>
+                              </div>
+                            </div>
+                            {u.role === "admin" && (
+                              <span className="px-2 py-0.5 bg-xboxGreen/20 border border-xboxGreen/40 rounded text-[10px] font-orbitron font-bold text-xboxGreen">
+                                ADMIN
+                              </span>
+                            )}
+                          </div>
+                          <div className="h-0.5 bg-white/5" />
+                          <div className="grid grid-cols-3 gap-2 text-center">
+                            <div>
+                              <p className="font-orbitron font-bold text-sm text-neonCyan">
+                                {u.ordersCount}
+                              </p>
+                              <p className="font-rajdhani text-[10px] text-gray-500 font-bold uppercase">
+                                Zamówienia
+                              </p>
+                            </div>
+                            <div>
+                              <p className="font-orbitron font-bold text-sm text-xboxGreen">
+                                {u.totalSpent.toFixed(2)}
+                              </p>
+                              <p className="font-rajdhani text-[10px] text-gray-500 font-bold uppercase">
+                                Wydano PLN
+                              </p>
+                            </div>
+                            <div>
+                              <p className="font-orbitron font-bold text-sm text-neonPink">
+                                {u.wishlist.length}
+                              </p>
+                              <p className="font-rajdhani text-[10px] text-gray-500 font-bold uppercase">
+                                Wishlist
+                              </p>
+                            </div>
+                          </div>
+                          <p className="font-rajdhani text-[10px] text-gray-600">
+                            Konto od: {new Date(u.createdAt).toLocaleDateString("pl-PL")}
+                          </p>
+                          {/* Delete Button */}
+                          <button
+                            onClick={() => setConfirmDeleteUser(u)}
+                            disabled={deletingUser === u.uid || u.role === "admin"}
+                            className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed font-rajdhani text-xs font-bold"
+                            title={u.role === "admin" ? "Nie można usunąć administratora" : "Usuń użytkownika"}
+                          >
+                            {deletingUser === u.uid ? (
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            ) : (
+                              <UserMinus className="w-3.5 h-3.5" />
+                            )}
+                            Usuń
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </motion.div>
             )}
           </>
         )}
       </main>
+
+      {/* Delete User Confirmation Modal */}
+      {confirmDeleteUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => !deletingUser && setConfirmDeleteUser(null)}
+          />
+          {/* Modal */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative w-full max-w-sm bg-[#101014] border border-white/10 rounded-3xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)] space-y-5"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-red-500/15 border border-red-500/40 flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                <AlertCircle className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <h3 className="font-orbitron font-bold text-sm text-white tracking-wider">
+                  USUŃ UŻYTKOWNIKA
+                </h3>
+                <p className="font-rajdhani text-xs text-gray-500 font-semibold">
+                  Tej operacji nie można cofnąć
+                </p>
+              </div>
+            </div>
+            <div className="h-px bg-white/10" />
+            <p className="font-rajdhani text-sm text-gray-300 font-semibold">
+              Na pewno chcesz usunąć użytkownika
+              <span className="text-white font-bold"> {confirmDeleteUser.displayName || "Gracz"}</span>
+              <span className="text-gray-500"> ({confirmDeleteUser.email})</span>?
+            </p>
+            <p className="font-rajdhani text-xs text-red-400/80 font-semibold">
+              Usunięcie dokumentu profilu z Firebase — konto auth pozostanie.
+            </p>
+            <div className="flex items-center gap-3 pt-1">
+              <button
+                onClick={() => setConfirmDeleteUser(null)}
+                disabled={deletingUser === confirmDeleteUser.uid}
+                className="flex-1 py-2.5 rounded-xl border border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white font-rajdhani text-sm font-bold tracking-wider transition-all disabled:opacity-50"
+              >
+                Anuluj
+              </button>
+              <button
+                onClick={handleDeleteUser}
+                disabled={deletingUser === confirmDeleteUser.uid}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-500/20 border border-red-500 text-red-400 hover:bg-red-500 hover:text-white font-rajdhani text-sm font-bold tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_12px_rgba(239,68,68,0.2)]"
+              >
+                {deletingUser === confirmDeleteUser.uid ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Usuwanie...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    Usuń
+                  </>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

@@ -8,6 +8,7 @@ import {
   type User,
 } from "firebase/auth"
 import { getFirebaseAuth } from "@/lib/firebase"
+import { updateUserProfile } from "@/lib/firebase-firestore"
 
 const googleProvider = new GoogleAuthProvider()
 
@@ -23,6 +24,7 @@ export async function signUpWithEmail(
   const auth = getFirebaseAuth()
   const credential = await createUserWithEmailAndPassword(auth, email, password)
   await updateProfile(credential.user, { displayName })
+  await updateUserProfile(credential.user.uid, { displayName })
   return credential.user
 }
 

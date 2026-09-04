@@ -114,6 +114,11 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
   return snap.data() as UserProfile
 }
 
+export async function getAllUsers(): Promise<UserProfile[]> {
+  const snap = await getDocs(usersCol())
+  return snap.docs.map((d) => ({ uid: d.id, ...d.data() }) as UserProfile)
+}
+
 export async function updateUserProfile(
   uid: string,
   data: Partial<UserProfile>,
@@ -122,6 +127,10 @@ export async function updateUserProfile(
     ...data,
     updatedAt: new Date().toISOString(),
   })
+}
+
+export async function deleteUserProfile(uid: string) {
+  await deleteDoc(doc(usersCol(), uid))
 }
 
 export async function toggleWishlist(uid: string, productId: number) {
@@ -138,26 +147,34 @@ export async function toggleWishlist(uid: string, productId: number) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function createProduct(data: Omit<ProductDoc, "createdAt">) {
+  const { id: _id, ...dataWithoutId } = data
   const now = new Date().toISOString()
-  const ref = await addDoc(productsCol(), { ...data, createdAt: now })
+  const ref = await addDoc(productsCol(), { ...dataWithoutId, createdAt: now })
   return ref.id
 }
 
 export async function getProduct(productId: string): Promise<ProductDoc | null> {
   const snap = await getDoc(doc(productsCol(), productId))
   if (!snap.exists()) return null
-  return { id: snap.id, ...snap.data() } as ProductDoc
+  const { id: _dataId, ...rest } = snap.data()
+  return { id: snap.id, ...rest } as ProductDoc
 }
 
 export async function getAllProducts(): Promise<ProductDoc[]> {
   const snap = await getDocs(productsCol())
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as ProductDoc))
+  return snap.docs.map((d) => {
+    const { id: _dataId, ...rest } = d.data()
+    return { id: d.id, ...rest } as ProductDoc
+  })
 }
 
 export async function getProductsByCategory(category: string): Promise<ProductDoc[]> {
   const q = query(productsCol(), where("category", "==", category))
   const snap = await getDocs(q)
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as ProductDoc))
+  return snap.docs.map((d) => {
+    const { id: _dataId, ...rest } = d.data()
+    return { id: d.id, ...rest } as ProductDoc
+  })
 }
 
 export async function updateProduct(productId: string, data: Partial<ProductDoc>) {
