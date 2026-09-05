@@ -16,7 +16,6 @@ import {
   Clock,
   RefreshCw,
   AlertCircle,
-  Crown,
   Gamepad2,
   Trash2,
   UserMinus,
@@ -949,7 +948,7 @@ export default function AdminPage() {
                               onError={() => setAddImageFailed(true)}
                               onLoad={() => setAddImageFailed(false)}
                             />
-                            <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent' />
+                            <div className='absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent' />
                             <span className='absolute bottom-2 left-2 font-rajdhani text-[10px] font-bold text-gray-300 bg-black/50 px-2 py-0.5 rounded backdrop-blur-sm'>
                               PODGLĄD OKŁADKI
                             </span>
@@ -1080,7 +1079,7 @@ export default function AdminPage() {
                             Wyróżniony produkt
                           </p>
                           <p className='font-rajdhani text-xs text-gray-500'>
-                            Wyświetlany na stronie głównej w sekcji "Klasyki"
+                            Wyświetlany na stronie głównej w sekcji &quot;Klasyki&quot;
                           </p>
                         </div>
                       </div>
