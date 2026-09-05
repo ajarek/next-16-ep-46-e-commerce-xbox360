@@ -9,9 +9,6 @@ import {
   addDoc,
   query,
   where,
-  serverTimestamp,
-  Timestamp,
-  type DocumentData,
 } from "firebase/firestore"
 import { getFirebaseDB } from "@/lib/firebase"
 
@@ -81,10 +78,18 @@ export interface ReviewDoc {
 // Lazy collection refs
 // ─────────────────────────────────────────────────────────────────────────────
 
-function usersCol() { return collection(getFirebaseDB(), "users") }
-function productsCol() { return collection(getFirebaseDB(), "products") }
-function ordersCol() { return collection(getFirebaseDB(), "orders") }
-function reviewsCol() { return collection(getFirebaseDB(), "reviews") }
+function usersCol() {
+  return collection(getFirebaseDB(), "users")
+}
+function productsCol() {
+  return collection(getFirebaseDB(), "products")
+}
+function ordersCol() {
+  return collection(getFirebaseDB(), "orders")
+}
+function reviewsCol() {
+  return collection(getFirebaseDB(), "reviews")
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Users
@@ -92,7 +97,10 @@ function reviewsCol() { return collection(getFirebaseDB(), "reviews") }
 
 export async function createUserProfile(
   uid: string,
-  data: Omit<UserProfile, "createdAt" | "updatedAt" | "ordersCount" | "totalSpent" | "wishlist">,
+  data: Omit<
+    UserProfile,
+    "createdAt" | "updatedAt" | "ordersCount" | "totalSpent" | "wishlist"
+  >,
 ) {
   const now = new Date().toISOString()
   const profile: UserProfile = {
@@ -139,7 +147,10 @@ export async function toggleWishlist(uid: string, productId: number) {
   const wishlist = profile.wishlist.includes(productId)
     ? profile.wishlist.filter((id) => id !== productId)
     : [...profile.wishlist, productId]
-  await updateDoc(doc(usersCol(), uid), { wishlist, updatedAt: new Date().toISOString() })
+  await updateDoc(doc(usersCol(), uid), {
+    wishlist,
+    updatedAt: new Date().toISOString(),
+  })
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -147,37 +158,38 @@ export async function toggleWishlist(uid: string, productId: number) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function createProduct(data: Omit<ProductDoc, "createdAt">) {
-  const { id: _id, ...dataWithoutId } = data
+  const dataWithoutId = { ...data } as Partial<ProductDoc>
+  delete dataWithoutId.id
   const now = new Date().toISOString()
   const ref = await addDoc(productsCol(), { ...dataWithoutId, createdAt: now })
   return ref.id
 }
 
-export async function getProduct(productId: string): Promise<ProductDoc | null> {
+export async function getProduct(
+  productId: string,
+): Promise<ProductDoc | null> {
   const snap = await getDoc(doc(productsCol(), productId))
   if (!snap.exists()) return null
-  const { id: _dataId, ...rest } = snap.data()
-  return { id: snap.id, ...rest } as ProductDoc
+  return { ...snap.data(), id: snap.id } as ProductDoc
 }
 
 export async function getAllProducts(): Promise<ProductDoc[]> {
   const snap = await getDocs(productsCol())
-  return snap.docs.map((d) => {
-    const { id: _dataId, ...rest } = d.data()
-    return { id: d.id, ...rest } as ProductDoc
-  })
+  return snap.docs.map((d) => ({ ...d.data(), id: d.id }) as ProductDoc)
 }
 
-export async function getProductsByCategory(category: string): Promise<ProductDoc[]> {
+export async function getProductsByCategory(
+  category: string,
+): Promise<ProductDoc[]> {
   const q = query(productsCol(), where("category", "==", category))
   const snap = await getDocs(q)
-  return snap.docs.map((d) => {
-    const { id: _dataId, ...rest } = d.data()
-    return { id: d.id, ...rest } as ProductDoc
-  })
+  return snap.docs.map((d) => ({ ...d.data(), id: d.id }) as ProductDoc)
 }
 
-export async function updateProduct(productId: string, data: Partial<ProductDoc>) {
+export async function updateProduct(
+  productId: string,
+  data: Partial<ProductDoc>,
+) {
   await updateDoc(doc(productsCol(), productId), data)
 }
 
@@ -217,14 +229,14 @@ export async function getUserOrders(userId: string): Promise<OrderDoc[]> {
   const q = query(ordersCol(), where("userId", "==", userId))
   const snap = await getDocs(q)
   return snap.docs
-    .map((d) => ({ id: d.id, ...d.data() } as OrderDoc))
+    .map((d) => ({ id: d.id, ...d.data() }) as OrderDoc)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 }
 
 export async function getAllOrders(): Promise<OrderDoc[]> {
   const snap = await getDocs(ordersCol())
   return snap.docs
-    .map((d) => ({ id: d.id, ...d.data() } as OrderDoc))
+    .map((d) => ({ id: d.id, ...d.data() }) as OrderDoc)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 }
 
@@ -259,10 +271,12 @@ export async function addReview(data: Omit<ReviewDoc, "createdAt" | "id">) {
   return ref.id
 }
 
-export async function getProductReviews(productId: number): Promise<ReviewDoc[]> {
+export async function getProductReviews(
+  productId: number,
+): Promise<ReviewDoc[]> {
   const q = query(reviewsCol(), where("productId", "==", productId))
   const snap = await getDocs(q)
   return snap.docs
-    .map((d) => ({ id: d.id, ...d.data() } as ReviewDoc))
+    .map((d) => ({ id: d.id, ...d.data() }) as ReviewDoc)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 }

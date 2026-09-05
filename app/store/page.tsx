@@ -180,7 +180,9 @@ function StoreContent() {
           return b.title.localeCompare(a.title)
         case "newest":
         default:
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
       }
     })
   }, [filteredProducts, sortBy])
@@ -749,6 +751,7 @@ function StoreContent() {
                     }
                     alt={selectedProductForModal.title}
                     fill
+                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                     className='object-cover'
                   />
                   {selectedProductForModal.discount > 0 && (

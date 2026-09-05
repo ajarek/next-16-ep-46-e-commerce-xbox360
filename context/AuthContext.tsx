@@ -62,18 +62,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), async (firebaseUser) => {
-      setUser(firebaseUser)
-      if (firebaseUser) {
-        await loadProfile(firebaseUser)
-      } else {
-        setProfile(null)
-      }
-      setLoading(false)
-    })
+    const unsubscribe = onAuthStateChanged(
+      getFirebaseAuth(),
+      async (firebaseUser) => {
+        setUser(firebaseUser)
+        if (firebaseUser) {
+          await loadProfile(firebaseUser)
+        } else {
+          setProfile(null)
+        }
+        setLoading(false)
+      },
+    )
 
     return () => unsubscribe()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

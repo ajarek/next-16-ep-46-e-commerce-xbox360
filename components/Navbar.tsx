@@ -21,6 +21,7 @@ import { useCartStore } from "@/store/cartStore"
 import { useMounted } from "@/hooks/useMounted"
 import { useAuth } from "@/context/AuthContext"
 import { logOut } from "@/lib/firebase-auth"
+import Image from "next/image"
 
 const Navbar: React.FC = () => {
   const pathname = usePathname()
@@ -44,7 +45,10 @@ const Navbar: React.FC = () => {
   // Close profile dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(e.target as Node)
+      ) {
         setProfileOpen(false)
       }
     }
@@ -125,116 +129,120 @@ const Navbar: React.FC = () => {
 
           {/* Auth States - Desktop */}
           {!loading && user ? (
-                /* Logged-in: Avatar dropdown */
-                <div className='relative' ref={profileRef}>
-                  <button
-                    onClick={() => setProfileOpen(!profileOpen)}
-                    className='flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 hover:border-neonCyan bg-white/5 hover:bg-neonCyan/5 transition-all duration-300'
+            /* Logged-in: Avatar dropdown */
+            <div className='relative' ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className='flex items-center gap-2 px-3 py-2 rounded-xl border border-white/10 hover:border-neonCyan bg-white/5 hover:bg-neonCyan/5 transition-all duration-300'
+              >
+                {/* Avatar */}
+                {user.photoURL ? (
+                  <Image
+                    src={user.photoURL}
+                    alt={user.displayName || "Avatar"}
+                    className='w-8 h-8 rounded-full object-cover border border-white/20'
+                    width={32}
+                    height={32}
+                  />
+                ) : (
+                  <div className='w-8 h-8 rounded-full bg-xboxGreen/30 border border-xboxGreen flex items-center justify-center text-xboxGreen font-orbitron text-xs font-bold'>
+                    {getInitials()}
+                  </div>
+                )}
+                <div className='hidden lg:flex flex-col items-start'>
+                  <span className='font-rajdhani text-sm font-bold text-white leading-tight truncate max-w-24'>
+                    {profile?.displayName || "Gracz"}
+                  </span>
+                  {isAdmin && (
+                    <span className='flex items-center gap-1 text-[10px] font-orbitron font-bold text-xboxGreen leading-tight'>
+                      <ShieldCheck className='w-3 h-3' />
+                      ADMIN
+                    </span>
+                  )}
+                </div>
+                <ChevronDown
+                  className={`w-4 h-4 text-gray-400 transition-transform ${profileOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {/* Dropdown */}
+              <AnimatePresence>
+                {profileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className='absolute right-0 top-full mt-2 w-56 backdrop-blur-md bg-cyberPanel border border-white/10 rounded-2xl p-2 shadow-[0_10px_40px_rgba(0,0,0,0.8)]'
                   >
-                    {/* Avatar */}
-                    {user.photoURL ? (
-                      <img
-                        src={user.photoURL}
-                        alt={user.displayName || "Avatar"}
-                        className='w-8 h-8 rounded-full object-cover border border-white/20'
-                      />
-                    ) : (
-                      <div className='w-8 h-8 rounded-full bg-xboxGreen/30 border border-xboxGreen flex items-center justify-center text-xboxGreen font-orbitron text-xs font-bold'>
-                        {getInitials()}
-                      </div>
-                    )}
-                    <div className='hidden lg:flex flex-col items-start'>
-                      <span className='font-rajdhani text-sm font-bold text-white leading-tight truncate max-w-24'>
+                    {/* User info header */}
+                    <div className='px-3 py-2.5 border-b border-white/10 mb-1'>
+                      <p className='font-rajdhani text-sm font-bold text-white truncate'>
                         {profile?.displayName || "Gracz"}
-                      </span>
+                      </p>
+                      <p className='font-rajdhani text-xs text-gray-500 truncate'>
+                        {user.email}
+                      </p>
                       {isAdmin && (
-                        <span className='flex items-center gap-1 text-[10px] font-orbitron font-bold text-xboxGreen leading-tight'>
+                        <span className='inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-xboxGreen/20 border border-xboxGreen/40 rounded-full text-[10px] font-orbitron font-bold text-xboxGreen'>
                           <ShieldCheck className='w-3 h-3' />
-                          ADMIN
+                          Panel Administratora
                         </span>
                       )}
                     </div>
-                    <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${profileOpen ? "rotate-180" : ""}`} />
-                  </button>
 
-                  {/* Dropdown */}
-                  <AnimatePresence>
-                    {profileOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className='absolute right-0 top-full mt-2 w-56 backdrop-blur-md bg-[#121216] border border-white/10 rounded-2xl p-2 shadow-[0_10px_40px_rgba(0,0,0,0.8)]'
+                    <Link
+                      href='/profile'
+                      onClick={() => setProfileOpen(false)}
+                      className='flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 font-rajdhani text-sm font-semibold transition-colors'
+                    >
+                      <UserCircle className='w-4 h-4' />
+                      <span>Mój profil</span>
+                    </Link>
+
+                    <Link
+                      href='/orders'
+                      onClick={() => setProfileOpen(false)}
+                      className='flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 font-rajdhani text-sm font-semibold transition-colors'
+                    >
+                      <ShoppingCart className='w-4 h-4' />
+                      <span>Moje zamówienia</span>
+                    </Link>
+
+                    {isAdmin && (
+                      <Link
+                        href='/admin'
+                        onClick={() => setProfileOpen(false)}
+                        className='flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xboxGreen hover:bg-xboxGreen/10 font-rajdhani text-sm font-semibold transition-colors'
                       >
-                        {/* User info header */}
-                        <div className='px-3 py-2.5 border-b border-white/10 mb-1'>
-                          <p className='font-rajdhani text-sm font-bold text-white truncate'>
-                            {profile?.displayName || "Gracz"}
-                          </p>
-                          <p className='font-rajdhani text-xs text-gray-500 truncate'>
-                            {user.email}
-                          </p>
-                          {isAdmin && (
-                            <span className='inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-xboxGreen/20 border border-xboxGreen/40 rounded-full text-[10px] font-orbitron font-bold text-xboxGreen'>
-                              <ShieldCheck className='w-3 h-3' />
-                              Panel Administratora
-                            </span>
-                          )}
-                        </div>
-
-                        <Link
-                          href='/profile'
-                          onClick={() => setProfileOpen(false)}
-                          className='flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 font-rajdhani text-sm font-semibold transition-colors'
-                        >
-                          <UserCircle className='w-4 h-4' />
-                          <span>Mój profil</span>
-                        </Link>
-
-                        <Link
-                          href='/orders'
-                          onClick={() => setProfileOpen(false)}
-                          className='flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white hover:bg-white/5 font-rajdhani text-sm font-semibold transition-colors'
-                        >
-                          <ShoppingCart className='w-4 h-4' />
-                          <span>Moje zamówienia</span>
-                        </Link>
-
-                        {isAdmin && (
-                          <Link
-                            href='/admin'
-                            onClick={() => setProfileOpen(false)}
-                            className='flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xboxGreen hover:bg-xboxGreen/10 font-rajdhani text-sm font-semibold transition-colors'
-                          >
-                            <ShieldCheck className='w-4 h-4' />
-                            <span>Panel Admina</span>
-                          </Link>
-                        )}
-
-                        <div className='border-t border-white/10 my-1' />
-
-                        <button
-                          onClick={handleSignOut}
-                          className='w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 font-rajdhani text-sm font-semibold transition-colors'
-                        >
-                          <LogOut className='w-4 h-4' />
-                          <span>Wyloguj się</span>
-                        </button>
-                      </motion.div>
+                        <ShieldCheck className='w-4 h-4' />
+                        <span>Panel Admina</span>
+                      </Link>
                     )}
-                  </AnimatePresence>
-                </div>
-              ) : (
-                /* Not logged in (or still loading) */
-                <Link
-                  href='/login'
-                  className='flex items-center gap-2 px-6 py-2.5 rounded-xl border border-white/10 hover:border-neonCyan bg-linear-to-r from-white/5 to-white/10 hover:from-neonCyan/20 hover:to-neonBlue/20 font-rajdhani text-base font-semibold tracking-wider hover:text-neonCyan text-white shadow-[0_0_15px_rgba(0,255,255,0.05)] hover:shadow-[0_0_20px_rgba(0,255,255,0.2)] transition-all duration-300'
-                >
-                  <User className='w-4 h-4' />
-                  <span>Zaloguj się</span>
-                </Link>
-              )}
+
+                    <div className='border-t border-white/10 my-1' />
+
+                    <button
+                      onClick={handleSignOut}
+                      className='w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 font-rajdhani text-sm font-semibold transition-colors'
+                    >
+                      <LogOut className='w-4 h-4' />
+                      <span>Wyloguj się</span>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            /* Not logged in (or still loading) */
+            <Link
+              href='/login'
+              className='flex items-center gap-2 px-6 py-2.5 rounded-xl border border-white/10 hover:border-neonCyan bg-linear-to-r from-white/5 to-white/10 hover:from-neonCyan/20 hover:to-neonBlue/20 font-rajdhani text-base font-semibold tracking-wider hover:text-neonCyan text-white shadow-[0_0_15px_rgba(0,255,255,0.05)] hover:shadow-[0_0_20px_rgba(0,255,255,0.2)] transition-all duration-300'
+            >
+              <User className='w-4 h-4' />
+              <span>Zaloguj się</span>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Buttons (Cart + Menu Toggle) */}
@@ -302,82 +310,84 @@ const Navbar: React.FC = () => {
 
               {/* Mobile Auth Section */}
               {!loading && user ? (
-                    <>
-                      {/* User info */}
-                      <div className='px-4 py-3 flex items-center gap-3'>
-                        {user.photoURL ? (
-                          <img
-                            src={user.photoURL}
-                            alt=""
-                            className='w-10 h-10 rounded-full object-cover border border-white/20'
-                          />
-                        ) : (
-                          <div className='w-10 h-10 rounded-full bg-xboxGreen/30 border border-xboxGreen flex items-center justify-center text-xboxGreen font-orbitron text-sm font-bold'>
-                            {getInitials()}
-                          </div>
-                        )}
-                        <div>
-                          <p className='font-rajdhani text-sm font-bold text-white'>
-                            {profile?.displayName || "Gracz"}
-                          </p>
-                          {isAdmin && (
-                            <span className='flex items-center gap-1 text-[10px] font-orbitron font-bold text-xboxGreen'>
-                              <ShieldCheck className='w-3 h-3' /> ADMIN
-                            </span>
-                          )}
-                        </div>
+                <>
+                  {/* User info */}
+                  <div className='px-4 py-3 flex items-center gap-3'>
+                    {user.photoURL ? (
+                      <Image
+                        src={user.photoURL}
+                        alt=''
+                        className='w-10 h-10 rounded-full object-cover border border-white/20'
+                        width={40}
+                        height={40}
+                      />
+                    ) : (
+                      <div className='w-10 h-10 rounded-full bg-xboxGreen/30 border border-xboxGreen flex items-center justify-center text-xboxGreen font-orbitron text-sm font-bold'>
+                        {getInitials()}
                       </div>
-
-                      <Link
-                        href='/profile'
-                        onClick={() => setMobileMenuOpen(false)}
-                        className='flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-white/10 bg-white/5 text-white font-medium text-base transition-colors'
-                      >
-                        <UserCircle className='w-4 h-4' />
-                        Mój profil
-                      </Link>
-
-                      <Link
-                        href='/orders'
-                        onClick={() => setMobileMenuOpen(false)}
-                        className='flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-white/10 bg-white/5 text-white font-medium text-base transition-colors'
-                      >
-                        <ShoppingCart className='w-4 h-4' />
-                        Moje zamówienia
-                      </Link>
-
+                    )}
+                    <div>
+                      <p className='font-rajdhani text-sm font-bold text-white'>
+                        {profile?.displayName || "Gracz"}
+                      </p>
                       {isAdmin && (
-                        <Link
-                          href='/admin'
-                          onClick={() => setMobileMenuOpen(false)}
-                          className='flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-xboxGreen/40 bg-xboxGreen/10 text-xboxGreen font-medium text-base transition-colors'
-                        >
-                          <ShieldCheck className='w-4 h-4' />
-                          Panel Admina
-                        </Link>
+                        <span className='flex items-center gap-1 text-[10px] font-orbitron font-bold text-xboxGreen'>
+                          <ShieldCheck className='w-3 h-3' /> ADMIN
+                        </span>
                       )}
+                    </div>
+                  </div>
 
-                      <button
-                        onClick={() => {
-                          handleSignOut()
-                          setMobileMenuOpen(false)
-                        }}
-                        className='w-full py-3 px-4 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 font-medium text-base transition-colors flex items-center justify-center gap-2'
-                      >
-                        <LogOut className='w-4 h-4' />
-                        Wyloguj się
-                      </button>
-                    </>
-                  ) : (
+                  <Link
+                    href='/profile'
+                    onClick={() => setMobileMenuOpen(false)}
+                    className='flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-white/10 bg-white/5 text-white font-medium text-base transition-colors'
+                  >
+                    <UserCircle className='w-4 h-4' />
+                    Mój profil
+                  </Link>
+
+                  <Link
+                    href='/orders'
+                    onClick={() => setMobileMenuOpen(false)}
+                    className='flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-white/10 bg-white/5 text-white font-medium text-base transition-colors'
+                  >
+                    <ShoppingCart className='w-4 h-4' />
+                    Moje zamówienia
+                  </Link>
+
+                  {isAdmin && (
                     <Link
-                      href='/login'
+                      href='/admin'
                       onClick={() => setMobileMenuOpen(false)}
-                      className='flex items-center justify-center gap-2.5 w-full py-3 px-4 rounded-xl border border-cyan-500/40 bg-[#021324] hover:bg-[#042038] text-cyan-400 font-medium text-base shadow-[0_0_15px_rgba(0,255,255,0.06)] hover:shadow-[0_0_20px_rgba(0,255,255,0.15)] transition-all duration-200'
+                      className='flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl border border-xboxGreen/40 bg-xboxGreen/10 text-xboxGreen font-medium text-base transition-colors'
                     >
-                      <User className='w-4 h-4 text-cyan-400 shrink-0' />
-                      <span>Zaloguj się</span>
+                      <ShieldCheck className='w-4 h-4' />
+                      Panel Admina
                     </Link>
                   )}
+
+                  <button
+                    onClick={() => {
+                      handleSignOut()
+                      setMobileMenuOpen(false)
+                    }}
+                    className='w-full py-3 px-4 rounded-xl border border-red-500/20 bg-red-500/5 text-red-400 font-medium text-base transition-colors flex items-center justify-center gap-2'
+                  >
+                    <LogOut className='w-4 h-4' />
+                    Wyloguj się
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href='/login'
+                  onClick={() => setMobileMenuOpen(false)}
+                  className='flex items-center justify-center gap-2.5 w-full py-3 px-4 rounded-xl border border-cyan-500/40 bg-[#021324] hover:bg-[#042038] text-cyan-400 font-medium text-base shadow-[0_0_15px_rgba(0,255,255,0.06)] hover:shadow-[0_0_20px_rgba(0,255,255,0.15)] transition-all duration-200'
+                >
+                  <User className='w-4 h-4 text-cyan-400 shrink-0' />
+                  <span>Zaloguj się</span>
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

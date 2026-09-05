@@ -1,4 +1,9 @@
-import { initializeApp, getApps, getApp as getFirebaseApp, type FirebaseApp } from "firebase/app"
+import {
+  initializeApp,
+  getApps,
+  getApp as getFirebaseApp,
+  type FirebaseApp,
+} from "firebase/app"
 import { getAuth, type Auth } from "firebase/auth"
 import { getFirestore, type Firestore } from "firebase/firestore"
 import { getStorage, type FirebaseStorage } from "firebase/storage"
@@ -21,7 +26,8 @@ let _storage: FirebaseStorage | null = null
 
 function getOrCreateApp(): FirebaseApp {
   if (!_app) {
-    _app = getApps().length === 0 ? initializeApp(firebaseConfig) : getFirebaseApp()
+    _app =
+      getApps().length === 0 ? initializeApp(firebaseConfig) : getFirebaseApp()
   }
   return _app
 }

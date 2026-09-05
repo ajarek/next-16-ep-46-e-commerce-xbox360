@@ -69,7 +69,8 @@ export default function DealsPage() {
 
   // UI States
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({})
-  const [selectedProductForModal, setSelectedProductForModal] = useState<ProductDoc | null>(null)
+  const [selectedProductForModal, setSelectedProductForModal] =
+    useState<ProductDoc | null>(null)
   const [activeTab, setActiveTab] = useState<DealFilterTab>("all")
   const [sortBy, setSortBy] = useState<string>("discount-desc")
   const [copiedCoupon, setCopiedCoupon] = useState(false)
@@ -121,10 +122,13 @@ export default function DealsPage() {
   // Cart Helper
   const getCartQuantity = (productId: string) => {
     const found = cartItems.find((item) => item.id === productId)
-    return found ? found.quantity ?? 1 : 0
+    return found ? (found.quantity ?? 1) : 0
   }
 
-  const totalCartCount = cartItems.reduce((acc, i) => acc + (i.quantity ?? 1), 0)
+  const totalCartCount = cartItems.reduce(
+    (acc, i) => acc + (i.quantity ?? 1),
+    0,
+  )
 
   // Filtered & Sorted Deals
   const filteredDeals = useMemo(() => {
@@ -231,7 +235,8 @@ export default function DealsPage() {
             animate={{ opacity: 1, y: 0 }}
             className='font-rajdhani text-gray-400 max-w-2xl mx-auto font-medium text-base sm:text-lg'
           >
-            Odkryj legendarne hity retro w specjalnych, obniżonych cenach. Oferty zmieniają się wraz z cyklem czasowym!
+            Odkryj legendarne hity retro w specjalnych, obniżonych cenach.
+            Oferty zmieniają się wraz z cyklem czasowym!
           </motion.p>
         </div>
 
@@ -247,7 +252,9 @@ export default function DealsPage() {
           >
             <div className='flex items-center justify-between gap-4 mb-4'>
               <div className='flex items-center gap-2 text-gray-300 font-rajdhani text-sm font-bold tracking-widest uppercase'>
-                <Clock className={`w-5 h-5 ${isUnderOneHour ? "text-neonPink animate-spin" : "text-neonOrange"}`} />
+                <Clock
+                  className={`w-5 h-5 ${isUnderOneHour ? "text-neonPink animate-spin" : "text-neonOrange"}`}
+                />
                 <span>OFERTA ZEGAROWA KOŃCZY SIĘ ZA:</span>
               </div>
               <span className='px-2.5 py-1 bg-white/5 border border-white/10 rounded-full font-rajdhani text-xs font-semibold text-gray-400'>
@@ -259,7 +266,9 @@ export default function DealsPage() {
             <div className='flex items-center justify-center sm:justify-start gap-3 sm:gap-6 font-orbitron py-2'>
               {/* Hours */}
               <div className='flex flex-col items-center bg-black/60 border border-white/10 rounded-2xl px-4 py-3 min-w-20 sm:min-w-24'>
-                <span className={`text-2xl sm:text-4xl font-black ${isUnderOneHour ? "text-neonPink text-glow-pink" : "text-white"}`}>
+                <span
+                  className={`text-2xl sm:text-4xl font-black ${isUnderOneHour ? "text-neonPink text-glow-pink" : "text-white"}`}
+                >
                   {formatTime(timeLeft.hours)}
                 </span>
                 <span className='font-rajdhani text-[11px] font-bold text-gray-400 tracking-wider mt-1'>
@@ -270,7 +279,9 @@ export default function DealsPage() {
 
               {/* Minutes */}
               <div className='flex flex-col items-center bg-black/60 border border-white/10 rounded-2xl px-4 py-3 min-w-20 sm:min-w-24'>
-                <span className={`text-2xl sm:text-4xl font-black ${isUnderOneHour ? "text-neonPink text-glow-pink" : "text-white"}`}>
+                <span
+                  className={`text-2xl sm:text-4xl font-black ${isUnderOneHour ? "text-neonPink text-glow-pink" : "text-white"}`}
+                >
                   {formatTime(timeLeft.minutes)}
                 </span>
                 <span className='font-rajdhani text-[11px] font-bold text-gray-400 tracking-wider mt-1'>
@@ -293,7 +304,10 @@ export default function DealsPage() {
             {/* Subtext info */}
             <div className='mt-4 flex items-center gap-2 text-xs font-rajdhani text-gray-400'>
               <Zap className='w-4 h-4 text-neonOrange shrink-0' />
-              <span>Ceny powrócą do regularnych po upływie odliczania. Zamówienia cyfrowe realizowane są natychmiastowo.</span>
+              <span>
+                Ceny powrócą do regularnych po upływie odliczania. Zamówienia
+                cyfrowe realizowane są natychmiastowo.
+              </span>
             </div>
           </div>
 
@@ -310,7 +324,8 @@ export default function DealsPage() {
                 DODATKOWE <span className='text-neonPink'>-10%</span>
               </h3>
               <p className='font-rajdhani text-xs text-gray-400'>
-                Wpisz ten kod w podsumowaniu koszyka, aby naliczyć kolejny rabat do całego zamówienia!
+                Wpisz ten kod w podsumowaniu koszyka, aby naliczyć kolejny rabat
+                do całego zamówienia!
               </p>
             </div>
 
@@ -345,10 +360,32 @@ export default function DealsPage() {
           {/* Filter Pills */}
           <div className='flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 custom-scrollbar'>
             {[
-              { id: "all", label: "Wszystkie Okazje", icon: Flame, count: allDeals.length },
-              { id: "huge-discount", label: "Rabat ≥ 25%", icon: Percent, count: allDeals.filter((p) => p.discount >= 25).length },
-              { id: "under-30", label: "Do 30 PLN", icon: Tag, count: allDeals.filter((p) => p.price * (1 - p.discount / 100) <= 30).length },
-              { id: "last-copies", label: "Ostatnie Sztuki", icon: PackageCheck, count: allDeals.filter((p) => p.stock === 1).length },
+              {
+                id: "all",
+                label: "Wszystkie Okazje",
+                icon: Flame,
+                count: allDeals.length,
+              },
+              {
+                id: "huge-discount",
+                label: "Rabat ≥ 25%",
+                icon: Percent,
+                count: allDeals.filter((p) => p.discount >= 25).length,
+              },
+              {
+                id: "under-30",
+                label: "Do 30 PLN",
+                icon: Tag,
+                count: allDeals.filter(
+                  (p) => p.price * (1 - p.discount / 100) <= 30,
+                ).length,
+              },
+              {
+                id: "last-copies",
+                label: "Ostatnie Sztuki",
+                icon: PackageCheck,
+                count: allDeals.filter((p) => p.stock === 1).length,
+              },
             ].map((tab) => {
               const Icon = tab.icon
               const isActive = activeTab === tab.id
@@ -362,9 +399,13 @@ export default function DealsPage() {
                       : "bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10"
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? "text-neonPink" : "text-gray-400"}`} />
+                  <Icon
+                    className={`w-3.5 h-3.5 ${isActive ? "text-neonPink" : "text-gray-400"}`}
+                  />
                   <span>{tab.label}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? "bg-neonPink/30 text-white" : "bg-white/5 text-gray-500"}`}>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? "bg-neonPink/30 text-white" : "bg-white/5 text-gray-500"}`}
+                  >
                     {tab.count}
                   </span>
                 </button>
@@ -400,7 +441,8 @@ export default function DealsPage() {
               Brak ofert dla wybranego filtra
             </h3>
             <p className='font-rajdhani text-gray-400 font-semibold'>
-              Nie znaleźliśmy promocji spełniających to kryterium. Sprawdź wszystkie okazje w strefie Deals.
+              Nie znaleźliśmy promocji spełniających to kryterium. Sprawdź
+              wszystkie okazje w strefie Deals.
             </p>
             <button
               onClick={() => setActiveTab("all")}
@@ -433,8 +475,7 @@ export default function DealsPage() {
                     {/* Top Left Badges */}
                     <div className='absolute top-4 left-4 z-20 flex flex-col gap-1.5 pointer-events-none'>
                       <span className='px-2.5 py-1 bg-neonPink text-black font-orbitron text-xs font-black rounded-lg shadow-[0_0_10px_#ff69b4] flex items-center gap-1 uppercase'>
-                        <Percent className='w-3 h-3' />
-                        -{product.discount}%
+                        <Percent className='w-3 h-3' />-{product.discount}%
                       </span>
                       {product.featured && (
                         <span className='px-2 py-0.5 bg-xboxGreen text-white font-orbitron text-[10px] font-bold rounded-lg shadow-[0_0_8px_#107c10] flex items-center gap-1 uppercase'>
@@ -499,7 +540,11 @@ export default function DealsPage() {
                           </span>
                           <div className='flex items-center gap-1 text-amber-400 font-semibold'>
                             <Star className='w-3.5 h-3.5 fill-amber-400' />
-                            <span>{product.reviewCount > 0 ? `4.9 (${product.reviewCount})` : "Klasyk"}</span>
+                            <span>
+                              {product.reviewCount > 0
+                                ? `4.9 (${product.reviewCount})`
+                                : "Klasyk"}
+                            </span>
                           </div>
                         </div>
 
@@ -531,7 +576,9 @@ export default function DealsPage() {
                           </span>
                           <div className='font-orbitron font-extrabold text-xl text-neonPink text-glow-pink'>
                             {finalPrice.toFixed(2)}{" "}
-                            <span className='text-xs font-bold text-gray-300'>PLN</span>
+                            <span className='text-xs font-bold text-gray-300'>
+                              PLN
+                            </span>
                           </div>
                         </div>
 
@@ -544,7 +591,11 @@ export default function DealsPage() {
                           }`}
                         >
                           <ShoppingCart className='w-4 h-4' />
-                          <span>{cartQty > 0 ? `W koszyku (${cartQty})` : "Kup Teraz"}</span>
+                          <span>
+                            {cartQty > 0
+                              ? `W koszyku (${cartQty})`
+                              : "Kup Teraz"}
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -560,21 +611,29 @@ export default function DealsPage() {
           <div className='p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3.5'>
             <Zap className='w-6 h-6 text-neonOrange shrink-0' />
             <div className='text-xs font-rajdhani'>
-              <p className='font-bold text-white uppercase text-sm'>Wysyłka Cyfrowa 0 PLN</p>
-              <p className='text-gray-400'>Klucz lub dostęp bezpośrednio po zakupie</p>
+              <p className='font-bold text-white uppercase text-sm'>
+                Wysyłka Cyfrowa 0 PLN
+              </p>
+              <p className='text-gray-400'>
+                Klucz lub dostęp bezpośrednio po zakupie
+              </p>
             </div>
           </div>
           <div className='p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3.5'>
             <ShieldCheck className='w-6 h-6 text-xboxGreen shrink-0' />
             <div className='text-xs font-rajdhani'>
-              <p className='font-bold text-white uppercase text-sm'>Oryginalne Gry Xbox 360</p>
+              <p className='font-bold text-white uppercase text-sm'>
+                Oryginalne Gry Xbox 360
+              </p>
               <p className='text-gray-400'>100% sprawdzona kompatybilność</p>
             </div>
           </div>
           <div className='p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3.5'>
             <Sparkles className='w-6 h-6 text-neonPink shrink-0' />
             <div className='text-xs font-rajdhani'>
-              <p className='font-bold text-white uppercase text-sm'>Limitowane Ceny</p>
+              <p className='font-bold text-white uppercase text-sm'>
+                Limitowane Ceny
+              </p>
               <p className='text-gray-400'>Nowa rotacja rabatów każdego dnia</p>
             </div>
           </div>
@@ -651,6 +710,7 @@ export default function DealsPage() {
                     }
                     alt={selectedProductForModal.title}
                     fill
+                    sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                     className='object-cover'
                   />
                   {selectedProductForModal.discount > 0 && (
@@ -677,15 +737,21 @@ export default function DealsPage() {
                   <div className='space-y-1.5 py-3 border-y border-white/10 text-xs font-rajdhani font-semibold text-gray-400'>
                     <div className='flex justify-between'>
                       <span>Dostępny stan magazynowy:</span>
-                      <span className='text-white font-bold'>{selectedProductForModal.stock} szt.</span>
+                      <span className='text-white font-bold'>
+                        {selectedProductForModal.stock} szt.
+                      </span>
                     </div>
                     <div className='flex justify-between'>
                       <span>Ocena społeczności:</span>
-                      <span className='text-amber-400 font-bold'>★ 4.9 ({selectedProductForModal.reviewCount} ocen)</span>
+                      <span className='text-amber-400 font-bold'>
+                        ★ 4.9 ({selectedProductForModal.reviewCount} ocen)
+                      </span>
                     </div>
                     <div className='flex justify-between'>
                       <span>Certyfikacja nośnika:</span>
-                      <span className='text-xboxGreen font-bold'>Oryginał Xbox 360</span>
+                      <span className='text-xboxGreen font-bold'>
+                        Oryginał Xbox 360
+                      </span>
                     </div>
                   </div>
 
@@ -695,7 +761,11 @@ export default function DealsPage() {
                         {selectedProductForModal.price.toFixed(2)} PLN
                       </span>
                       <div className='font-orbitron font-extrabold text-2xl text-neonPink text-glow-pink'>
-                        {(selectedProductForModal.price * (1 - selectedProductForModal.discount / 100)).toFixed(2)} PLN
+                        {(
+                          selectedProductForModal.price *
+                          (1 - selectedProductForModal.discount / 100)
+                        ).toFixed(2)}{" "}
+                        PLN
                       </div>
                     </div>
 

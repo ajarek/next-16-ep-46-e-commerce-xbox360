@@ -31,7 +31,7 @@ const Hero = () => {
       </div>
 
       {/* Shadow Overlay */}
-      <div className='absolute inset-0 bg-linear-to-t from-[#0a0a0a] via-black/40 to-transparent z-1 pointer-events-none' />
+      <div className='absolute inset-0 bg-linear-to-t from-cyberDark via-black/40 to-transparent z-1 pointer-events-none' />
 
       {/* Content Container */}
       <div className='relative z-10 max-w-7xl mx-auto text-center space-y-8 select-none'>
